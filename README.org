@@ -14,19 +14,35 @@ navigate a web browser more effectively.
 
 Key bindings:
 
-| Key           | Description                  |
-|---------------+------------------------------|
-| C-f           | Move point 1 character right |
-| C-b           | Move point 1 character left  |
-| C-a/Home      | Beginning of line            |
-| C-e/End       | End of line                  |
-| C-v/Page Down | Page Down                    |
-| M-v/Page Up   | Page up                      |
-| C-k           | Kill to end of line          |
-| Down          | Scroll 1 line down           |
-| Up            | Scroll 1 line up             |
-| M-w           | Copy text                    |
-|---------------+------------------------------|
+| Key           | Description                   |
+|---------------+-------------------------------|
+| C-f           | Move cursor 1 character right |
+| C-b           | Move cursor 1 character left  |
+| C-a/Home      | Beginning of line             |
+| C-e/End       | End of line                   |
+| C-v/Page Down | Page Down                     |
+| M-v/Page Up   | Page up                       |
+| C-k           | Kill to end of line           |
+| Down          | Scroll 1 line down            |
+| Up            | Scroll 1 line up              |
+| M-w           | Copy text                     |
+|---------------+-------------------------------|
+
+* Demo
+
+** Text input
++ Before (notice minibuffer area):
+[[file:demo/emacs_watch_youtube.gif][file:~/workspace/xwidgete/demo/emacs_watch_youtube.gif]]
+
++ After:
+[[file:demo/emacs_xwidget_insert_chars.gif][file:~/workspace/xwidgete/demo/emacs_xwidget_insert_chars.gif]]
+
+** Copy text:
++ Before:
+[[file:demo/emacs_xwidget_copy_text_old.gif][file:~/workspace/xwidgete/demo/emacs_xwidget_copy_text_old.gif]]
+
++ After:
+[[file:demo/emacs_xwidget_copy_text_html.gif][file:~/workspace/xwidgete/demo/emacs_xwidget_copy_text_html.gif]]
 
 * Limitations
 - You cannot send request with `RET`; to send one, you have to press a button.

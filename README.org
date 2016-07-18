@@ -1,0 +1,43 @@
+
+* Description
+This package makes Xwidget browser in Emacs 25 behaves more like a normal
+browser, with Emacs key bindings. At the moment, interacting with Xwidget
+browser is rough. For example, to enter something input a textbox:
+
+- First, put cursor in the text box.
+- Press =RET=. A prompt appears in minibuffer area waiting for new input.
+- Enter whatever you want.
+- Press =RET=. Now, text appears in text box.
+
+With this package, you will be able to enter text directly into a textbox and
+navigate a web browser more effectively.
+
+Key bindings:
+
+| Key           | Description                  |
+|---------------+------------------------------|
+| C-f           | Move point 1 character right |
+| C-b           | Move point 1 character left  |
+| C-a/Home      | Beginning of line            |
+| C-e/End       | End of line                  |
+| C-v/Page Down | Page Down                    |
+| M-v/Page Up   | Page up                      |
+| C-k           | Kill to end of line          |
+| Down          | Scroll 1 line down           |
+| Up            | Scroll 1 line up             |
+| M-w           | Copy text                    |
+|---------------+------------------------------|
+
+* Limitations
+- You cannot send request with `RET`; to send one, you have to press a button.
+  I haven't figured out how to do it. Patch welcome.
+
+- You can only insert one space character. For some reason, the textbox in
+  current Xwidget only limit to one space character in between other characters,
+  no matter how many you insert. If you try the original input method described
+  at the beginning and enter as many space characters and feed it to the
+  textbox, the next tiem you press `RET`, every space character is trimmed
+  except one.
+
+- Copied text has no space indentation as in original content. But at least it
+  preserves newlines. Without this package, not even newlines are preserved.

@@ -8,8 +8,10 @@
 ;;
 ;;; License: GPLv3
 
+(require 'eieio)
 (require 'cl-lib)
 (require 'xwidget)
+(require 'subr-x)
 
 (defvar *xwidget-webkit-total-spaces-pressed* nil
   "Check whether a space key is pressed. This variable is a

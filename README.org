@@ -32,17 +32,17 @@ Key bindings:
 
 ** Text input
 + Before (notice minibuffer area):
-[[file:demo/emacs_watch_youtube.gif][file:~/workspace/xwidgete/demo/emacs_watch_youtube.gif]]
+[[file:demo/emacs_watch_youtube.gif][demo/emacs_watch_youtube.gif]]
 
 + After:
-[[file:demo/emacs_xwidget_insert_chars.gif][file:~/workspace/xwidgete/demo/emacs_xwidget_insert_chars.gif]]
+[[file:demo/emacs_xwidget_insert_chars.gif][demo/emacs_xwidget_insert_chars.gif]]
 
 ** Copy text:
 + Before:
-[[file:demo/emacs_xwidget_copy_text_old.gif][file:~/workspace/xwidgete/demo/emacs_xwidget_copy_text_old.gif]]
+[[file:demo/emacs_xwidget_copy_text_old.gif][demo/emacs_xwidget_copy_text_old.gif]]
 
 + After:
-[[file:demo/emacs_xwidget_copy_text_html.gif][file:~/workspace/xwidgete/demo/emacs_xwidget_copy_text_html.gif]]
+[[file:demo/emacs_xwidget_copy_text_html.gif][demo/emacs_xwidget_copy_text_html.gif]]
 
 * Limitations
 - You cannot send request with `RET`; to send one, you have to press a button.

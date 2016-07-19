@@ -12,6 +12,8 @@ browser is rough. For example, to enter something input a textbox:
 With this package, you will be able to enter text directly into a textbox and
 navigate a web browser more effectively.
 
+* Features
+
 Key bindings:
 
 | Key           | Description                   |

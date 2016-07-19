@@ -1,27 +1,30 @@
-;; Author: Tu Do
-;; URL: https://github.com/tuhdo/xwidgete
-;;
-;; This file is not part of GNU Emacs.
-;;
+;;; License: GPLv3
 ;; Description: This package enhancees current usability of xwidget browser,
 ;; making it behaves more like a normal browser, with Emacs key bindings!
 ;;
-;;; License: GPLv3
+;; Author: Tu, Do Hoang <tuhdo1710@gmail.com>
+;; URL      : https://github.com/tuhdo/semantic-refactor
+;; Maintainer: Tu, Do Hoang
+;; Version: 0.3
+;; Package-Requires: ((emacs "25"))
+;; URL: https://github.com/tuhdo/xwidgete
+;; Doc URL:
+;; Keywords: xwidgete, tools
 
 (require 'eieio)
 (require 'cl-lib)
 (require 'xwidget)
 (require 'subr-x)
 
-(defvar *xwidget-webkit-total-spaces-pressed* nil
+(defvar *xwidgete-total-spaces-pressed* nil
   "Check whether a space key is pressed. This variable is a
   workaround for entering space character, since trailing spaces
   are always trimmed when writing back to textbox.")
 
-(defvar *xwidget-webkit-current-active-element* nil
+(defvar *xwidgete-current-active-element* nil
   "This varaible caches the retrieved DOM element in action.")
 
-(defvar xwidget-webkit-get-html-selection-js "
+(defvar xwidgete-get-html-selection-js "
 function extract_html_selection () {
     var selection = window.getSelection();
     if (selection.rangeCount > 0) {
@@ -40,14 +43,14 @@ function extract_html_selection () {
 "
   "JS to retrieve HTML content of a selected region.")
 
-(defvar xwidget-webkit-set-caret "
+(defvar xwidgete-set-caret "
 function set_caret(pos) {
     var el = findactiveelement(document);
     el.setSelectionRange(pos,pos)
 }
 ")
 
-(defvar xwidget-webkit-delete-selected-text "
+(defvar xwidgete-delete-selected-text "
 function delete_selected_text() {
     var ele  = findactiveelement(document);
     var text = ele.value;
@@ -64,7 +67,7 @@ function delete_selected_text() {
 ")
 
 
-(defclass xwidget-webkit-js-dom ()
+(defclass xwidgete-js-dom ()
   ((id
     :initargs :id
     :accessor id
@@ -95,18 +98,18 @@ function delete_selected_text() {
 ;; Macros ;;
 ;;;;;;;;;;;;
 
-(defmacro xwidget-webkit-interactive-get-char (c)
+(defmacro xwidgete-interactive-get-char (c)
   `(interactive
     (let* ((xww (xwidget-webkit-current-session))
-           (field-value (value (xwidget-webkit-find-active-element) xww)))
+           (field-value (value (xwidgete-find-active-element) xww)))
       (list xww field-value ,c))))
 
 ;;;;;;;;;;;;;
 ;; Methods ;;
 ;;;;;;;;;;;;;
 
-(cl-defmethod initialize-instance ((elem xwidget-webkit-js-dom) &rest args)
-  "Constructor for `xwidget-webkit-js-dom'"
+(cl-defmethod initialize-instance ((elem xwidgete-js-dom) &rest args)
+  "Constructor for `xwidgete-js-dom'"
   (let ((xww (xwidget-webkit-current-session)))
     (message "called after creating webkikt-js-element")
     (when xww
@@ -129,7 +132,7 @@ function delete_selected_text() {
                                "findactiveelement(document).selectionEnd;")))))
 
 ;; getter and setter for selectionStart
-(cl-defmethod selectionStart ((elem xwidget-webkit-js-dom) xw)
+(cl-defmethod selectionStart ((elem xwidgete-js-dom) xw)
   (xwidget-webkit-execute-script xw xwidget-webkit-activeelement-js)
   (let ((caret-pos (xwidget-webkit-execute-script-rv
                     xw
@@ -138,15 +141,15 @@ function delete_selected_text() {
 
     (string-to-int caret-pos)))
 
-(cl-defmethod set-selectionStart ((elem xwidget-webkit-js-dom) xw pos)
-  (xwidget-webkit-execute-script xw xwidget-webkit-set-caret)
+(cl-defmethod set-selectionStart ((elem xwidgete-js-dom) xw pos)
+  (xwidget-webkit-execute-script xw xwidgete-set-caret)
   (xwidget-webkit-execute-script xw
                                  (format "set_caret(%s);"
                                          (number-to-string pos)))
   (oset elem selectionStart pos))
 
 ;; getter and setter for value
-(cl-defmethod value ((elem xwidget-webkit-js-dom) xw)
+(cl-defmethod value ((elem xwidgete-js-dom) xw)
   (xwidget-webkit-execute-script xw xwidget-webkit-activeelement-js)
   (let ((field-value (xwidget-webkit-execute-script-rv
                       xw
@@ -154,7 +157,7 @@ function delete_selected_text() {
     (oset elem value field-value)
     field-value))
 
-(cl-defmethod set-value ((elem xwidget-webkit-js-dom) xw str)
+(cl-defmethod set-value ((elem xwidgete-js-dom) xw str)
   (oset elem value str)
   (xwidget-webkit-execute-script xw (format "findactiveelement(document).value='%s';" str)))
 
@@ -163,25 +166,25 @@ function delete_selected_text() {
 ;; Functions ;;
 ;;;;;;;;;;;;;;;
 
-(defun xwidget-webkit-find-active-element ()
+(defun xwidgete-find-active-element ()
   "Returns current active DOM element.
 
-If the element is the same in the cache `*xwidget-webkit-current-active-element*',
-then simply returns *xwidget-webkit-current-active-element*'. Otherwise create new instance that maps to the new active DOM element."
+If the element is the same in the cache `*xwidgete-current-active-element*',
+then simply returns *xwidgete-current-active-element*'. Otherwise create new instance that maps to the new active DOM element."
   (let* ((xw (xwidget-webkit-current-session))
          (cur-id nil))
     (xwidget-webkit-execute-script xw xwidget-webkit-activeelement-js)
     (setq cur-id (xwidget-webkit-execute-script-rv xw "findactiveelement(document).id;"))
-    (if (and (not (null *xwidget-webkit-current-active-element*))
-             (string-equal (id *xwidget-webkit-current-active-element*) cur-id))
-        *xwidget-webkit-current-active-element*
-      (setq *xwidget-webkit-current-active-element* (make-instance 'xwidget-webkit-js-dom)))))
+    (if (and (not (null *xwidgete-current-active-element*))
+             (string-equal (id *xwidgete-current-active-element*) cur-id))
+        *xwidgete-current-active-element*
+      (setq *xwidgete-current-active-element* (make-instance 'xwidgete-js-dom)))))
 
-(defun xwidget-webkit-self-insert-command (xw value c)
+(defun xwidgete-self-insert-command (xw value c)
   "Self-insert command for ASCII char from 31 to 126."
-  (xwidget-webkit-interactive-get-char (this-command-keys))
-  (let* ((space-pressed *xwidget-webkit-total-spaces-pressed*)
-         (caret-pos (selectionStart (xwidget-webkit-find-active-element) xw))
+  (xwidgete-interactive-get-char (this-command-keys))
+  (let* ((space-pressed *xwidgete-total-spaces-pressed*)
+         (caret-pos (selectionStart (xwidgete-find-active-element) xw))
          (value-len (length value))
          (splice-index (if (> caret-pos value-len)
                            value-len
@@ -192,67 +195,67 @@ then simply returns *xwidget-webkit-current-active-element*'. Otherwise create n
          (str2 (if (string-empty-p value)
                    ""
                  (substring value splice-index value-len))))
-    (setq *xwidget-webkit-total-spaces-pressed* nil)
-    (set-value *xwidget-webkit-current-active-element*
+    (setq *xwidgete-total-spaces-pressed* nil)
+    (set-value *xwidgete-current-active-element*
                xw
                (concat str1 (if space-pressed " " "") c str2))
-    (set-selectionStart (xwidget-webkit-find-active-element) xw (+ caret-pos (if space-pressed 1 0) 1))))
+    (set-selectionStart (xwidgete-find-active-element) xw (+ caret-pos (if space-pressed 1 0) 1))))
 
-(defun xwidget-webkit-self-insert-command-backspace ()
+(defun xwidgete-self-insert-command-backspace ()
   "Self-insert command for backspace."
   (interactive)
   (let* ((xw (xwidget-webkit-current-session))
          (caret-pos nil))
-    (xwidget-webkit-execute-script xw xwidget-webkit-delete-selected-text)
+    (xwidget-webkit-execute-script xw xwidgete-delete-selected-text)
     (xwidget-webkit-execute-script xw "delete_selected_text();")
-    (setq caret-pos (selectionStart (xwidget-webkit-find-active-element) xw))
-    (set-selectionStart (xwidget-webkit-find-active-element) xw caret-pos)))
+    (setq caret-pos (selectionStart (xwidgete-find-active-element) xw))
+    (set-selectionStart (xwidgete-find-active-element) xw caret-pos)))
 
-(defun xwidget-webkit-kill ()
+(defun xwidgete-kill ()
   "Kill command that kills from the caret to end."
   (interactive)
   (let* ((xw (xwidget-webkit-current-session))
-         (caret-pos (selectionStart (xwidget-webkit-find-active-element) xw))
-         (value (value (xwidget-webkit-find-active-element) xw))
+         (caret-pos (selectionStart (xwidgete-find-active-element) xw))
+         (value (value (xwidgete-find-active-element) xw))
          (str1 (substring value 0 caret-pos)))
-    (setq *xwidget-webkit-total-spaces-pressed* 0)
-    (set-value (xwidget-webkit-find-active-element) xw str1)
-    (setq caret-pos (selectionStart (xwidget-webkit-find-active-element) xw))
-    (set-selectionStart (xwidget-webkit-find-active-element) xw caret-pos)))
+    (setq *xwidgete-total-spaces-pressed* 0)
+    (set-value (xwidgete-find-active-element) xw str1)
+    (setq caret-pos (selectionStart (xwidgete-find-active-element) xw))
+    (set-selectionStart (xwidgete-find-active-element) xw caret-pos)))
 
-(defun xwidget-webkit-beginning-of-line ()
+(defun xwidgete-beginning-of-line ()
   (interactive)
-  (set-selectionStart (xwidget-webkit-find-active-element)
+  (set-selectionStart (xwidgete-find-active-element)
                       (xwidget-webkit-current-session)
                       0))
 
-(defun xwidget-webkit-end-of-line ()
+(defun xwidgete-end-of-line ()
   (interactive)
-  (let ((value-length (length (value (xwidget-webkit-find-active-element)
+  (let ((value-length (length (value (xwidgete-find-active-element)
                                      (xwidget-webkit-current-session)))))
-    (set-selectionStart (xwidget-webkit-find-active-element)
+    (set-selectionStart (xwidgete-find-active-element)
                         (xwidget-webkit-current-session)
                         value-length)))
 
-(defun xwidget-webkit-caret-move-left ()
+(defun xwidgete-caret-move-left ()
   (interactive)
   (let* ((xw (xwidget-webkit-current-session))
-         (caret-pos (selectionStart (xwidget-webkit-find-active-element) xw)))
-    (set-selectionStart (xwidget-webkit-find-active-element)
+         (caret-pos (selectionStart (xwidgete-find-active-element) xw)))
+    (set-selectionStart (xwidgete-find-active-element)
                         xw
                         (1- caret-pos))))
 
-(defun xwidget-webkit-caret-move-right ()
+(defun xwidgete-caret-move-right ()
   (interactive)
   (let* ((xw (xwidget-webkit-current-session))
-         (caret-pos (selectionStart (xwidget-webkit-find-active-element) xw)))
-    (set-selectionStart (xwidget-webkit-find-active-element)
+         (caret-pos (selectionStart (xwidgete-find-active-element) xw)))
+    (set-selectionStart (xwidgete-find-active-element)
                         xw
                         (1+ caret-pos))))
 
-(defun xwidget-webkit-self-insert-command-space (xw value c)
-  (xwidget-webkit-interactive-get-char nil)
-  (let* ((caret-pos (selectionStart (xwidget-webkit-find-active-element) xw))
+(defun xwidgete-self-insert-command-space (xw value c)
+  (xwidgete-interactive-get-char nil)
+  (let* ((caret-pos (selectionStart (xwidgete-find-active-element) xw))
          (value-len (length value))
          (splice-index (if (> caret-pos value-len)
                            value-len
@@ -263,11 +266,11 @@ then simply returns *xwidget-webkit-current-active-element*'. Otherwise create n
          (str2 (if (string-empty-p value)
                    ""
                  (substring value splice-index value-len))))
-    (setq *xwidget-webkit-total-spaces-pressed* t)
-    (set-value *xwidget-webkit-current-active-element*
+    (setq *xwidgete-total-spaces-pressed* t)
+    (set-value *xwidgete-current-active-element*
                xw
                (concat str1 " " str2))
-    (set-selectionStart (xwidget-webkit-find-active-element) xw (+ caret-pos 1))))
+    (set-selectionStart (xwidgete-find-active-element) xw (+ caret-pos 1))))
 
 ;; by default, xwidget reuses previous xwidget window,
 ;; thus overriding your current website, unless a prefix argument
@@ -277,31 +280,31 @@ then simply returns *xwidget-webkit-current-active-element*'. Otherwise create n
 (defun xwidget-browse-url-no-reuse (url &optional sessoin)
   (interactive (progn
                  (require 'browse-url)
-                 (browse-url-interactive-arg "xwidget-webkit URL: "
+                 (browse-url-interactive-arg "xwidgete URL: "
                                              )))
   (xwidget-webkit-browse-url url t))
 
-(defun xwidget-webkit-define-keys ()
+(defun xwidgete-define-keys ()
   (mapcar (lambda (c)
-            (define-key xwidget-webkit-mode-map (kbd c) 'xwidget-webkit-self-insert-command))
+            (define-key xwidget-webkit-mode-map (kbd c) 'xwidgete-self-insert-command))
           (mapcar (lambda (char-code)
                     (char-to-string char-code))
                   (number-sequence 33 126 1))))
 
-(defun xwidget-webkit-page-up ()
+(defun xwidgete-page-up ()
   "Scroll webkit up."
   (interactive)
-  (xwidget-set-adjustment (xwidget-webkit-last-session) 'vertical t -300))
+  (xwidget-set-adjustment (xwidgete-last-session) 'vertical t -300))
 
-(defun xwidget-webkit-page-down ()
+(defun xwidgete-page-down ()
   "Scroll webkit down."
   (interactive)
-  (xwidget-set-adjustment (xwidget-webkit-last-session) 'vertical t 300))
+  (xwidget-set-adjustment (xwidgete-last-session) 'vertical t 300))
 
-(defun xwidget-webkit-get-selection ()
+(defun xwidgete-get-selection ()
   "Get the webkit selection."
   (xwidget-webkit-execute-script (xwidget-webkit-current-session)
-                                 xwidget-webkit-get-html-selection-js)
+                                 xwidgete-get-html-selection-js)
   (let* ((html-content (xwidget-webkit-execute-script-rv (xwidget-webkit-current-session)
                                                          "extract_html_selection();"))
          (html-content-sexp (with-temp-buffer
@@ -313,39 +316,39 @@ then simply returns *xwidget-webkit-current-active-element*'. Otherwise create n
     rendered-content))
 
 ;; make these keys behave like normal browser
-(define-key xwidget-webkit-mode-map [mouse-4] 'xwidget-webkit-page-up)
-(define-key xwidget-webkit-mode-map [mouse-5] 'xwidget-webkit-page-down)
-(define-key xwidget-webkit-mode-map (kbd "<next>") 'xwidget-webkit-page-down)
-(define-key xwidget-webkit-mode-map (kbd "<prior>") 'xwidget-webkit-page-up)
-(define-key xwidget-webkit-mode-map (kbd "C-v") 'xwidget-webkit-page-down)
-(define-key xwidget-webkit-mode-map (kbd "M-v") 'xwidget-webkit-page-up)
-(define-key xwidget-webkit-mode-map (kbd "C-a") 'xwidget-webkit-beginning-of-line)
-(define-key xwidget-webkit-mode-map (kbd "C-e") 'xwidget-webkit-end-of-line)
-(define-key xwidget-webkit-mode-map (kbd "C-k") 'xwidget-webkit-kill)
-(define-key xwidget-webkit-mode-map (kbd "<home>") 'xwidget-webkit-beginning-of-line)
-(define-key xwidget-webkit-mode-map (kbd "<end>") 'xwidget-webkit-end-of-line)
-(define-key xwidget-webkit-mode-map (kbd "<up>") 'xwidget-webkit-scroll-down)
-(define-key xwidget-webkit-mode-map (kbd "<down>") 'xwidget-webkit-scroll-up)
-(define-key xwidget-webkit-mode-map (kbd "<left>") 'xwidget-webkit-caret-move-left)
-(define-key xwidget-webkit-mode-map (kbd "C-b") 'xwidget-webkit-caret-move-left)
-(define-key xwidget-webkit-mode-map (kbd "C-f") 'xwidget-webkit-caret-move-right)
+(define-key xwidget-webkit-mode-map [mouse-4] 'xwidgete-page-up)
+(define-key xwidget-webkit-mode-map [mouse-5] 'xwidgete-page-down)
+(define-key xwidget-webkit-mode-map (kbd "<next>") 'xwidgete-page-down)
+(define-key xwidget-webkit-mode-map (kbd "<prior>") 'xwidgete-page-up)
+(define-key xwidget-webkit-mode-map (kbd "C-v") 'xwidgete-page-down)
+(define-key xwidget-webkit-mode-map (kbd "M-v") 'xwidgete-page-up)
+(define-key xwidget-webkit-mode-map (kbd "C-a") 'xwidgete-beginning-of-line)
+(define-key xwidget-webkit-mode-map (kbd "C-e") 'xwidgete-end-of-line)
+(define-key xwidget-webkit-mode-map (kbd "C-k") 'xwidgete-kill)
+(define-key xwidget-webkit-mode-map (kbd "<home>") 'xwidgete-beginning-of-line)
+(define-key xwidget-webkit-mode-map (kbd "<end>") 'xwidgete-end-of-line)
+(define-key xwidget-webkit-mode-map (kbd "<up>") 'xwidgete-scroll-down)
+(define-key xwidget-webkit-mode-map (kbd "<down>") 'xwidgete-scroll-up)
+(define-key xwidget-webkit-mode-map (kbd "<left>") 'xwidgete-caret-move-left)
+(define-key xwidget-webkit-mode-map (kbd "C-b") 'xwidgete-caret-move-left)
+(define-key xwidget-webkit-mode-map (kbd "C-f") 'xwidgete-caret-move-right)
 
-(define-key xwidget-webkit-mode-map (kbd "M-w") 'xwidget-webkit-copy-selection-as-kill)
-;; (define-key xwidget-webkit-mode-map (kbd "C-c") 'xwidget-webkit-copy-selection-as-kill)
-(define-key xwidget-webkit-mode-map (kbd "M-b") 'xwidget-webkit-back)
-(define-key xwidget-webkit-mode-map (kbd "M-r") 'xwidget-webkit-reload)
+(define-key xwidget-webkit-mode-map (kbd "M-w") 'xwidgete-copy-selection-as-kill)
+;; (define-key xwidget-webkit-mode-map (kbd "C-c") 'xwidgete-copy-selection-as-kill)
+(define-key xwidget-webkit-mode-map (kbd "M-b") 'xwidgete-back)
+(define-key xwidget-webkit-mode-map (kbd "M-r") 'xwidgete-reload)
 (define-key xwidget-webkit-mode-map (kbd "M-g") 'xwidget-webkit-browse-url)
-(define-key xwidget-webkit-mode-map (kbd "M-u") 'xwidget-webkit-current-url)
+(define-key xwidget-webkit-mode-map (kbd "M-u") 'xwidgete-current-url)
 
-(xwidget-webkit-define-keys)
-(define-key xwidget-webkit-mode-map (kbd "<backspace>") 'xwidget-webkit-self-insert-command-backspace)
-(define-key xwidget-webkit-mode-map (kbd "SPC") 'xwidget-webkit-self-insert-command-space)
+(xwidgete-define-keys)
+(define-key xwidget-webkit-mode-map (kbd "<backspace>") 'xwidgete-self-insert-command-backspace)
+(define-key xwidget-webkit-mode-map (kbd "SPC") 'xwidgete-self-insert-command-space)
 
 ;; adapt webkit according to window configuration chagne automatically
 ;; without this hook, every time you change your window configuration,
 ;; you must press 'a' to adapt webkit content to new window size
 (add-hook 'window-configuration-change-hook (lambda ()
-                                              (when (equal major-mode 'xwidget-webkit-mode)
-                                                (xwidget-webkit-adjust-size-dispatch))))
+                                              (when (equal major-mode 'xwidgete-mode)
+                                                (xwidgete-adjust-size-dispatch))))
 
 (provide 'xwidgete)

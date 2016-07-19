@@ -16,6 +16,10 @@
 (require 'xwidget)
 (require 'subr-x)
 
+;;;;;;;;;;;;;;;
+;; Variables ;;
+;;;;;;;;;;;;;;;
+
 (defvar *xwidgete-total-spaces-pressed* nil
   "Check whether a space key is pressed. This variable is a
   workaround for entering space character, since trailing spaces
@@ -179,6 +183,10 @@ then simply returns *xwidgete-current-active-element*'. Otherwise create new ins
              (string-equal (id *xwidgete-current-active-element*) cur-id))
         *xwidgete-current-active-element*
       (setq *xwidgete-current-active-element* (make-instance 'xwidgete-js-dom)))))
+
+;;;;;;;;;;;;;;
+;; Commands ;;
+;;;;;;;;;;;;;;
 
 (defun xwidgete-self-insert-command (xw value c)
   "Self-insert command for ASCII char from 31 to 126."

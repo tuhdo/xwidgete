@@ -304,12 +304,12 @@ then simply returns *xwidgete-current-active-element*'. Otherwise create new ins
 (defun xwidgete-page-up ()
   "Scroll webkit up."
   (interactive)
-  (xwidget-set-adjustment (xwidgete-last-session) 'vertical t -300))
+  (xwidget-set-adjustment (xwidget-webkit-last-session) 'vertical t -300))
 
 (defun xwidgete-page-down ()
   "Scroll webkit down."
   (interactive)
-  (xwidget-set-adjustment (xwidgete-last-session) 'vertical t 300))
+  (xwidget-set-adjustment (xwidget-webkit-last-session) 'vertical t 300))
 
 (defun xwidgete-get-selection ()
   "Get the webkit selection."
@@ -359,6 +359,6 @@ then simply returns *xwidgete-current-active-element*'. Otherwise create new ins
 ;; you must press 'a' to adapt webkit content to new window size
 (add-hook 'window-configuration-change-hook (lambda ()
                                               (when (equal major-mode 'xwidgete-mode)
-                                                (xwidgete-adjust-size-dispatch))))
+                                                (xwidget-webkit-adjust-size-dispatch))))
 
 (provide 'xwidgete)

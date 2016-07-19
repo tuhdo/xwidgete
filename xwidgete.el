@@ -3,7 +3,6 @@
 ;; making it behaves more like a normal browser, with Emacs key bindings!
 ;;
 ;; Author: Tu, Do Hoang <tuhdo1710@gmail.com>
-;; URL      : https://github.com/tuhdo/semantic-refactor
 ;; Maintainer: Tu, Do Hoang
 ;; Version: 0.3
 ;; Package-Requires: ((emacs "25"))

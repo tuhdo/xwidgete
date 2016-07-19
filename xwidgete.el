@@ -43,10 +43,10 @@ function extract_html_selection () {
 "
   "JS to retrieve HTML content of a selected region.")
 
-(defvar xwidgete-set-caret "
+(setq xwidgete-set-caret "
 function set_caret(pos) {
     var el = findactiveelement(document);
-    el.setSelectionRange(pos,pos)
+    el.setSelectionRange(pos,pos);
 }
 ")
 
@@ -198,7 +198,10 @@ then simply returns *xwidgete-current-active-element*'. Otherwise create new ins
     (setq *xwidgete-total-spaces-pressed* nil)
     (set-value *xwidgete-current-active-element*
                xw
-               (concat str1 (if space-pressed " " "") c str2))
+               (concat str1 (if (and space-pressed
+                                     (not  (zerop caret-pos)))
+                                " "
+                              "") c str2))
     (set-selectionStart (xwidgete-find-active-element) xw (+ caret-pos (if space-pressed 1 0) 1))))
 
 (defun xwidgete-self-insert-command-backspace ()

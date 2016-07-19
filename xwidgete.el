@@ -1,5 +1,7 @@
-;;; License: GPLv3
-;; Description: This package enhancees current usability of xwidget browser,
+;;; xwidgete.el --- enhances usability of current xwidget browser
+;;
+;; License: GPLv3
+;; Description: This package enhances usability of current xwidget browser,
 ;; making it behaves more like a normal browser, with Emacs key bindings!
 ;;
 ;; Author: Tu, Do Hoang <tuhdo1710@gmail.com>
@@ -362,3 +364,5 @@ then simply returns *xwidgete-current-active-element*'. Otherwise create new ins
                                                 (xwidgete-adjust-size-dispatch))))
 
 (provide 'xwidgete)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; xwidgete.el ends here
